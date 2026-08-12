@@ -2,55 +2,41 @@
 
 樋口創太(S) 🦅 vs 本郷凌太郎(R) 🐊 の個サル対戦記録アプリ。
 
-- 1日ごとに得点・アシストを入力
 - スコア = 得点 × 1 + アシスト × 0.8 で自動計算し、その日の勝者を表示
 - シーズン(4か月区切り)ごとに勝敗数・平均得点・平均アシストを集計
-- データは Firebase Firestore に保存し、樋口さん・本郷さんそれぞれの端末から同期
-- 閲覧は誰でも可能、記録の追加・編集・削除は Google サインインした本人のみ
+- データは `src/matches.js` に直接埋め込み(外部サービス・アカウント登録不要)
+- 新しい試合を記録するときは `src/matches.js` を編集して push すると、GitHub Actions が
+  自動でビルド・再公開する
+
+閲覧専用のシンプルな構成です。誰でもURLにアクセスすれば見られますが、記録の追加・編集は
+コード(`src/matches.js`)を直接書き換える形になります。
 
 ## 公開URL
 
-GitHub Pages を有効化すると `https://<GitHubユーザー名>.github.io/futsal-tracker/` で公開されます。
+GitHub Pages(Settings → Pages → Source: GitHub Actions)を有効化すると
+`https://<GitHubユーザー名>.github.io/futsal-tracker/` で公開されます。
 
-## セットアップ手順(初回のみ・あなた自身の作業)
+## 新しい試合を記録する
 
-### 1. GitHub Pages を有効化する
+`src/matches.js` の配列末尾に1行追加してください。
 
-このリポジトリの Settings → Pages → Source を **GitHub Actions** に設定してください。
-`main` ブランチに push すると `.github/workflows/deploy.yml` が自動でビルド・公開します。
+```js
+{ date: '2026-08-18', sGoals: 3, sAssists: 2, rGoals: 4, rAssists: 1, voided: false, note: '' },
+```
 
-### 2. Firebase プロジェクトを作成する(無料)
+- `date`: `YYYY-MM-DD`
+- `sGoals` / `sAssists`: 樋口さんの得点・アシスト
+- `rGoals` / `rAssists`: 本郷さんの得点・アシスト
+- `voided`: その日たまたま同じチームになるなどして無効試合として扱う場合は `true`
+- `note`: 補足メモ(任意)
 
-1. https://console.firebase.google.com/ で新しいプロジェクトを作成(Googleアカウントがあれば無料)
-2. 「構築」→「Firestore Database」→ データベースを作成(本番環境モードでOK、リージョンは `asia-northeast1` など任意)
-3. 「構築」→「Authentication」→ Sign-in method で **Google** プロバイダを有効化
-4. Authentication → Settings → 承認済みドメイン に、GitHub Pages の公開ドメイン
-   (`<GitHubユーザー名>.github.io`)を追加
-5. プロジェクトの設定(⚙️アイコン)→ 全般 → 「マイアプリ」→ ウェブアプリを追加(`</>`アイコン)
-6. 表示された `firebaseConfig` オブジェクト(`apiKey`, `authDomain`, `projectId` などを含むJSON)をコピー
+`main` ブランチに push されると自動でビルド・再デプロイされます。
 
-### 3. Firestore のセキュリティルールを設定する
+## 過去データについて
 
-Firestore Database → ルール タブに、このリポジトリの `firestore.rules` の内容を貼り付けて公開してください。
-`ALLOWED_EMAILS` 相当の箇所(`request.auth.token.email in [...]`)に、書き込みを許可する
-Google アカウントのメールアドレス(あなたと本郷さんの分)を追加してください。
-
-### 4. アプリに Firebase の設定を読み込ませる
-
-1. 公開されたページ(`https://<GitHubユーザー名>.github.io/futsal-tracker/`)を開く
-2. 初回は設定画面が表示されるので、手順2でコピーした `firebaseConfig` のJSONをそのまま貼り付けて「接続する」
-3. 設定はブラウザの localStorage に保存されるので、以後その端末では再入力不要
-4. 本郷さんの端末でも同じURLを開いて同じ設定を貼り付ければ、同じデータを共有できます
-5. Googleでサインインすると入力フォームが表示され、記録の追加・編集・削除ができます
-
-### 5. 過去データの読み込み
-
-サインイン後、データが空の状態だと「過去データを読み込む」ボタンが表示されます。
-LINEノート(2025-08〜2026-08)から読み取った記録があらかじめ `src/seedData.js` に入っているので、
-ボタン一つでFirestoreに一括投入されます(既にデータがある場合は動作しません)。
-
-読み取った過去データのうち、以下の2件は元メモの意味が読み取りきれなかったため
-`note` 欄に注記を残してあります。アプリ上で内容を確認し、必要なら編集してください。
+2025-08〜2026-08分はLINEノートのスクリーンショットから読み取って `src/matches.js` に
+収録済みです。以下の2件は元メモの意味が読み取りきれなかったため `note` 欄に注記してあります。
+意味が分かれば教えてください。
 
 - 2025-10-25: 元メモに「慈悲4-5」という注記あり
 - 2025-11-30: 元メモに🦅🤝🐊(握手)の記載あり。シーズン最終日の特別な意味づけの可能性
@@ -70,9 +56,9 @@ LINEノート(2025-08〜2026-08)から読み取った記録があらかじめ `s
 
 ## 「同じチームのため無効」の扱い
 
-その日たまたま同じチームだった場合の記録は `voided: true` として保存され、勝敗数にはカウントされませんが、
-平均得点・平均アシストの集計には含まれます(実際にプレーした記録として)。挙動を変えたい場合は
-`src/main.js` の `computeStats` を調整してください。
+`voided: true` の試合は勝敗数にはカウントされませんが、平均得点・平均アシストの集計には
+含まれます(実際にプレーした記録として)。挙動を変えたい場合は `src/main.js` の
+`computeStats` を調整してください。
 
 ## ローカル開発
 
@@ -83,6 +69,11 @@ npm run dev
 
 ## 技術スタック
 
-- Vite(ビルドツール)+ Vanilla JS
-- Firebase Firestore(データ保存)+ Firebase Authentication(Googleサインイン)
+- Vite(ビルドツール)+ Vanilla JS(外部データベース・認証なし、静的サイトのみ)
 - GitHub Actions → GitHub Pages(無料ホスティング)
+
+## 将来クラウド共有に戻したい場合
+
+以前検討していた「Firebase Firestore + Googleサインインで両者の端末から同期入力する」構成に
+戻したくなったら、そのように伝えてもらえれば再度実装します(このバージョンの1つ前のコミット
+履歴にFirebase版の実装が残っています)。
