@@ -2,6 +2,10 @@ import './style.css';
 import { seasonNumberForDate, formatSeasonRange } from './seasons.js';
 import { matchResult, winnerEmoji } from './scoring.js';
 import { MATCHES } from './matches.js';
+import { buildDistributionChart, attachChartTooltips } from './charts.js';
+
+const S_COLOR = '#3987e5';
+const R_COLOR = '#d95926';
 
 const root = document.getElementById('app');
 
@@ -60,6 +64,8 @@ function render() {
       </div>
     </section>
 
+    ${filtered.length > 0 ? renderDistributionSection(filtered) : ''}
+
     <section class="table-section">
       <table>
         <thead>
@@ -95,6 +101,46 @@ function render() {
       render();
     });
   });
+
+  attachChartTooltips(root);
+}
+
+function renderDistributionSection(matches) {
+  const goalsChart = buildDistributionChart({
+    id: 'goalsChart',
+    title: '得点の分布',
+    unitLabel: '得点',
+    sValues: matches.map((m) => m.sGoals),
+    rValues: matches.map((m) => m.rGoals),
+    sColor: S_COLOR,
+    rColor: R_COLOR,
+  });
+  const assistsChart = buildDistributionChart({
+    id: 'assistsChart',
+    title: 'アシストの分布',
+    unitLabel: 'アシスト',
+    sValues: matches.map((m) => m.sAssists),
+    rValues: matches.map((m) => m.rAssists),
+    sColor: S_COLOR,
+    rColor: R_COLOR,
+  });
+
+  return `
+    <section class="dist-section">
+      <div class="dist-header">
+        <h3>個人統計分布</h3>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="swatch" style="background:${S_COLOR}"></span>樋口(S)</span>
+          <span class="legend-item"><span class="swatch" style="background:${R_COLOR}"></span>本郷(R)</span>
+          <span class="legend-item"><span class="swatch swatch-dashed"></span>期待値(平均)</span>
+        </div>
+      </div>
+      <div class="dist-grid">
+        ${goalsChart}
+        ${assistsChart}
+      </div>
+    </section>
+  `;
 }
 
 function renderRow(m) {
