@@ -11,11 +11,13 @@ const BAR_MAX_WIDTH = 24;
 const BAR_GAP = 2; // S/Rの2本の間
 const GROUP_GAP = 8; // バケット(得点数)同士の間
 
-// value(整数)の配列から 0..max の出現回数配列を作る。
-function histogramCounts(values, max) {
+// value(整数、またはfloorで整数バケットに丸めた値)の配列から
+// 0..max の出現回数配列を作る。
+function histogramCounts(values, max, continuous) {
   const counts = new Array(max + 1).fill(0);
   values.forEach((v) => {
-    if (v >= 0 && v <= max) counts[v] += 1;
+    const bucket = continuous ? Math.floor(v) : v;
+    if (bucket >= 0 && bucket <= max) counts[bucket] += 1;
   });
   return counts;
 }
@@ -23,6 +25,20 @@ function histogramCounts(values, max) {
 function mean(values) {
   if (values.length === 0) return 0;
   return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
+export function stdDev(values) {
+  if (values.length === 0) return 0;
+  const m = mean(values);
+  const variance = values.reduce((a, b) => a + (b - m) ** 2, 0) / values.length;
+  return Math.sqrt(variance);
+}
+
+// 変動係数(CV) = 標準偏差 / 平均。単位の異なる指標同士でも「バラつきの大きさ」を比較できる。
+export function coefficientOfVariation(values) {
+  const m = mean(values);
+  if (m === 0) return 0;
+  return stdDev(values) / m;
 }
 
 // 見やすい目盛り間隔(1, 2, 5, 10, ...)を選ぶ。
@@ -43,10 +59,12 @@ function escapeAttr(str) {
   return String(str).replace(/"/g, '&quot;');
 }
 
-export function buildDistributionChart({ id, title, unitLabel, sValues, rValues, sColor, rColor }) {
-  const maxBucket = Math.max(0, ...sValues, ...rValues);
-  const sCounts = histogramCounts(sValues, maxBucket);
-  const rCounts = histogramCounts(rValues, maxBucket);
+export function buildDistributionChart({ id, title, unitLabel, sValues, rValues, sColor, rColor, continuous = false, axisCaption }) {
+  const maxBucket = continuous
+    ? Math.max(0, ...sValues.map(Math.floor), ...rValues.map(Math.floor))
+    : Math.max(0, ...sValues, ...rValues);
+  const sCounts = histogramCounts(sValues, maxBucket, continuous);
+  const rCounts = histogramCounts(rValues, maxBucket, continuous);
   const maxCount = Math.max(1, ...sCounts, ...rCounts);
   const sMean = mean(sValues);
   const rMean = mean(rValues);
@@ -75,14 +93,15 @@ export function buildDistributionChart({ id, title, unitLabel, sValues, rValues,
     const sH = yScale(sCounts[k]);
     const rH = yScale(rCounts[k]);
     const baseline = PAD_TOP + innerH;
+    const bucketLabel = continuous ? `${k}-${k + 1}` : `${k}`;
     bars.push(`
-      <rect class="hist-bar" data-bucket="${k}" data-series="S" data-count="${sCounts[k]}" data-unit="${escapeAttr(unitLabel)}"
+      <rect class="hist-bar" data-bucket="${escapeAttr(bucketLabel)}" data-series="S" data-count="${sCounts[k]}" data-unit="${escapeAttr(unitLabel)}"
         x="${groupLeft}" y="${baseline - sH}" width="${barW}" height="${Math.max(sH, sH > 0 ? 2 : 0)}"
         rx="4" fill="${sColor}" />
-      <rect class="hist-bar" data-bucket="${k}" data-series="R" data-count="${rCounts[k]}" data-unit="${escapeAttr(unitLabel)}"
+      <rect class="hist-bar" data-bucket="${escapeAttr(bucketLabel)}" data-series="R" data-count="${rCounts[k]}" data-unit="${escapeAttr(unitLabel)}"
         x="${groupLeft + barW + BAR_GAP}" y="${baseline - rH}" width="${barW}" height="${Math.max(rH, rH > 0 ? 2 : 0)}"
         rx="4" fill="${rColor}" />
-      <text x="${xCenter(k)}" y="${baseline + 16}" class="axis-label" text-anchor="middle">${k}</text>
+      <text x="${xCenter(k)}" y="${baseline + 16}" class="axis-label" text-anchor="middle">${k}${continuous ? '+' : ''}</text>
     `);
   }
 
@@ -110,7 +129,71 @@ export function buildDistributionChart({ id, title, unitLabel, sValues, rValues,
         ${bars.join('')}
         ${meanLines}
       </svg>
-      <p class="chart-caption">横軸: 1日あたりの${unitLabel}数 / 縦軸: 試合数(点線 = 平均 = 次戦の期待値)</p>
+      <p class="chart-caption">${axisCaption || `横軸: 1日あたりの${unitLabel}数`} / 縦軸: 試合数(点線 = 平均 = 次戦の期待値)</p>
+    </div>
+  `;
+}
+
+// シーズンをまたいだ推移(折れ線)を描画する。例: シーズンごとの安定性(CV)の推移。
+export function buildTrendLineChart({ id, title, categories, sValues, rValues, sColor, rColor, unitLabel, valueFormat }) {
+  const format = valueFormat || ((v) => v.toFixed(2));
+  const maxY = Math.max(0.01, ...sValues, ...rValues);
+
+  const innerW = SVG_W - PAD_LEFT - PAD_RIGHT;
+  const innerH = SVG_H - PAD_TOP - PAD_BOTTOM;
+  const colW = innerW / categories.length;
+  const baseline = PAD_TOP + innerH;
+
+  const yScale = (v) => (v / maxY) * innerH;
+  const xCenter = (i) => PAD_LEFT + (i + 0.5) * colW;
+
+  const step = niceStep(maxY);
+  const gridLines = [];
+  for (let g = 0; g <= maxY; g += step) {
+    const y = baseline - yScale(g);
+    gridLines.push(`<line x1="${PAD_LEFT}" y1="${y}" x2="${SVG_W - PAD_RIGHT}" y2="${y}" class="grid-line" />`);
+    gridLines.push(`<text x="${PAD_LEFT - 6}" y="${y + 3}" class="axis-label" text-anchor="end">${format(g)}</text>`);
+  }
+
+  const linePath = (values) =>
+    values.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xCenter(i).toFixed(1)} ${(baseline - yScale(v)).toFixed(1)}`).join(' ');
+
+  const dots = (values, color, series) =>
+    values
+      .map(
+        (v, i) => `
+      <circle cx="${xCenter(i)}" cy="${baseline - yScale(v)}" r="4" fill="${color}" stroke="var(--panel)" stroke-width="2" />
+    `,
+      )
+      .join('');
+
+  const xLabels = categories
+    .map((c, i) => `<text x="${xCenter(i)}" y="${baseline + 16}" class="axis-label" text-anchor="middle">${c}</text>`)
+    .join('');
+
+  const hitAreas = categories
+    .map(
+      (c, i) => `
+      <rect class="trend-hit" data-label="${escapeAttr(c)}" data-s="${format(sValues[i])}" data-r="${format(rValues[i])}"
+        data-unit="${escapeAttr(unitLabel)}" x="${PAD_LEFT + i * colW}" y="${PAD_TOP}" width="${colW}" height="${innerH}"
+        fill="transparent" />
+    `,
+    )
+    .join('');
+
+  return `
+    <div class="chart-card" id="${id}">
+      <h4>${title}</h4>
+      <svg viewBox="0 0 ${SVG_W} ${SVG_H}" class="dist-svg" role="img" aria-label="${escapeAttr(title)}">
+        ${gridLines.join('')}
+        <line x1="${PAD_LEFT}" y1="${baseline}" x2="${SVG_W - PAD_RIGHT}" y2="${baseline}" class="axis-baseline" />
+        <path d="${linePath(sValues)}" class="trend-line" stroke="${sColor}" fill="none" />
+        <path d="${linePath(rValues)}" class="trend-line" stroke="${rColor}" fill="none" />
+        ${dots(sValues, sColor, 'S')}
+        ${dots(rValues, rColor, 'R')}
+        ${xLabels}
+        ${hitAreas}
+      </svg>
     </div>
   `;
 }
@@ -146,5 +229,26 @@ export function attachChartTooltips(root) {
     bar.addEventListener('pointerenter', show);
     bar.addEventListener('pointermove', show);
     bar.addEventListener('pointerleave', hide);
+  });
+
+  // 折れ線チャート: 1本のホバー領域でS/R両方の値を一度に表示する。
+  const hitAreas = root.querySelectorAll('.trend-hit');
+  hitAreas.forEach((area) => {
+    const show = (evt) => {
+      const label = area.dataset.label;
+      const unit = area.dataset.unit;
+      tooltip.textContent = `${label}: 樋口(S) ${area.dataset.s}${unit} / 本郷(R) ${area.dataset.r}${unit}`;
+      tooltip.hidden = false;
+      const x = (evt.touches ? evt.touches[0].clientX : evt.clientX) + 12;
+      const y = (evt.touches ? evt.touches[0].clientY : evt.clientY) + 12;
+      tooltip.style.left = `${x}px`;
+      tooltip.style.top = `${y}px`;
+    };
+    const hide = () => {
+      tooltip.hidden = true;
+    };
+    area.addEventListener('pointerenter', show);
+    area.addEventListener('pointermove', show);
+    area.addEventListener('pointerleave', hide);
   });
 }
