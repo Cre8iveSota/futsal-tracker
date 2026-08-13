@@ -67,6 +67,11 @@ body {
 .stat-card h3 { margin: 0 0 8px; font-size: 0.95rem; color: var(--text-dim); }
 .stat-card p { margin: 2px 0; }
 .season-winner { margin-top: 8px; font-weight: 600; }
+.stat-card-wide { grid-column: 1 / -1; }
+.cv-table { font-size: 0.85rem; margin-top: 4px; }
+.cv-table th, .cv-table td { padding: 3px 10px 3px 0; border-bottom: none; white-space: normal; }
+.cv-table th { color: var(--text-dim); font-weight: 500; }
+.cv-note { margin: 8px 0 0; font-size: 0.75rem; color: var(--text-dim); }
 
 /* ---- distribution charts ---- */
 .dist-section { margin-bottom: 24px; }
@@ -116,6 +121,15 @@ body {
 .hist-bar { cursor: pointer; transition: opacity 0.1s; }
 .hist-bar:hover { opacity: 0.75; }
 .chart-caption { margin: 6px 0 4px; font-size: 0.72rem; color: var(--text-dim); }
+
+.dist-grid-single { grid-template-columns: 1fr; max-width: 640px; }
+.trend-line { stroke-width: 2; }
+.trend-hit { cursor: pointer; }
+.trend-hit:hover { fill: rgba(255, 255, 255, 0.04); }
+
+.stability-table-wrap { overflow-x: auto; margin-top: 10px; }
+.stability-table { font-size: 0.8rem; }
+.stability-table th, .stability-table td { padding: 6px 10px; }
 
 .chart-tooltip {
   position: fixed;
