@@ -8,7 +8,12 @@ import { renderHomeSection } from './home.js';
 const S_COLOR = '#3987e5';
 const R_COLOR = '#d95926';
 const LOW_SAMPLE_THRESHOLD = 5;
-const VIEWS = ['home', 'stats', 'records'];
+const NAV_ITEMS = [
+  { hash: 'home', icon: '🏠', label: 'ホーム' },
+  { hash: 'stats', icon: '📊', label: '統計・分布' },
+  { hash: 'records', icon: '📋', label: '全記録' },
+];
+const VIEWS = NAV_ITEMS.map((item) => item.hash);
 
 const root = document.getElementById('app');
 
@@ -43,9 +48,9 @@ function render() {
     </header>
 
     <nav class="view-nav">
-      <a href="#home" class="view-tab ${state.view === 'home' ? 'active' : ''}">🏠 ホーム</a>
-      <a href="#stats" class="view-tab ${state.view === 'stats' ? 'active' : ''}">📊 統計・分布</a>
-      <a href="#records" class="view-tab ${state.view === 'records' ? 'active' : ''}">📋 全記録</a>
+      ${NAV_ITEMS.map(
+        (item) => `<a href="#${item.hash}" class="view-tab ${state.view === item.hash ? 'active' : ''}">${item.icon} ${item.label}</a>`,
+      ).join('')}
     </nav>
 
     ${state.view === 'home' ? renderHomeView() : ''}
@@ -55,6 +60,17 @@ function render() {
     <footer class="footer-note">
       <p>新しい記録は <code>src/matches.js</code> を編集してpushすると反映されます。</p>
     </footer>
+
+    <nav class="bottom-nav">
+      ${NAV_ITEMS.map(
+        (item) => `
+        <a href="#${item.hash}" class="bottom-tab ${state.view === item.hash ? 'active' : ''}">
+          <span class="bottom-tab-icon">${item.icon}</span>
+          <span class="bottom-tab-label">${item.label}</span>
+        </a>
+      `,
+      ).join('')}
+    </nav>
   `;
 
   document.querySelectorAll('.season-tabs .tab').forEach((btn) => {
