@@ -211,7 +211,7 @@ body {
   font-size: 0.8rem;
   color: var(--text-dim);
 }
-.swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; border: 1.5px solid transparent; }
+.swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; border: 3px solid transparent; }
 .swatch-dashed {
   width: 14px;
   height: 0;
@@ -238,7 +238,7 @@ body {
 .axis-label { fill: var(--text-dim); font-size: 9px; }
 .mean-line { stroke-width: 2; stroke-dasharray: 4 3; }
 .mean-label { fill: var(--text-dim); font-size: 9px; font-weight: 600; }
-.hist-bar { cursor: pointer; transition: opacity 0.1s; stroke-width: 1.5; }
+.hist-bar { cursor: pointer; transition: opacity 0.1s; stroke-width: 3; }
 .hist-bar:hover { opacity: 0.75; }
 .hist-bar[data-series="S"] { stroke: var(--s-border); }
 .hist-bar[data-series="R"] { stroke: var(--r-border); }
