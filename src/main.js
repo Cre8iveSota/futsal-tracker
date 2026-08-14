@@ -3,6 +3,7 @@ import { seasonNumberForDate, formatSeasonRange } from './seasons.js';
 import { matchResult, winnerEmoji } from './scoring.js';
 import { MATCHES } from './matches.js';
 import { buildDistributionChart, buildTrendLineChart, attachChartTooltips, stdDev, coefficientOfVariation } from './charts.js';
+import { renderHomeSection } from './home.js';
 
 const S_COLOR = '#3987e5';
 const R_COLOR = '#d95926';
@@ -31,6 +32,8 @@ function render() {
     <header class="topbar">
       <h1>🦅 vs 🐊 個サル対戦記録</h1>
     </header>
+
+    ${renderHomeSection(MATCHES, { sColor: S_COLOR, rColor: R_COLOR })}
 
     <section class="season-tabs">
       <button class="tab ${state.selectedSeason === 'all' ? 'active' : ''}" data-season="all">全期間</button>

@@ -8,6 +8,8 @@
   --s-color: #3987e5;
   --r-color: #d95926;
   --gridline: #2c3a48;
+  --good: #0ca30c;
+  --down: #e66767;
 }
 
 * { box-sizing: border-box; }
@@ -36,6 +38,47 @@ body {
   margin-bottom: 16px;
 }
 .topbar h1 { font-size: 1.3rem; margin: 0; }
+
+/* ---- home (直近のコンディション) ---- */
+.home-section {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.home-section h2 { margin: 0; font-size: 1.05rem; color: var(--text); }
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.home-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.home-card h3 { margin: 0 0 8px; font-size: 0.9rem; color: var(--text-dim); }
+.home-card h3.home-subhead { margin-top: 14px; }
+.recent-table { font-size: 0.85rem; }
+.recent-table th, .recent-table td { padding: 5px 8px; }
+.score-sub { color: var(--text-dim); font-size: 0.78em; margin-left: 2px; }
+.home-note { margin: 8px 0 0; font-size: 0.8rem; color: var(--text-dim); }
+.streak-highlight { font-size: 1rem; font-weight: 600; margin: 0; }
+.trend-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.trend-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--panel-border);
+}
+.trend-list li:last-child { border-bottom: none; }
+.trend-up { color: var(--good); font-weight: 600; }
+.trend-down { color: var(--down); font-weight: 600; }
+.trend-flat { color: var(--text-dim); font-weight: 600; }
 
 /* ---- season tabs ---- */
 .season-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
