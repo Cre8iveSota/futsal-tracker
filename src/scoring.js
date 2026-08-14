@@ -5,7 +5,7 @@ export function computeDayScore(goals, assists) {
   return goals + assists * ASSIST_WEIGHT;
 }
 
-// 引き分け(同スコア)や「同じチームのため無効」の日は勝敗にカウントしない。
+// 引き分け(同ポイント)や「同じチームのため無効」の日は勝敗にカウントしない。
 export function matchResult(match) {
   const sScore = computeDayScore(match.sGoals, match.sAssists);
   const rScore = computeDayScore(match.rGoals, match.rAssists);

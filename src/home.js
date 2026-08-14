@@ -112,7 +112,7 @@ export function renderHomeSection(allMatches, { sColor, rColor }) {
 
   const sparkline = buildTrendLineChart({
     id: 'recentSparkline',
-    title: '直近5試合のスコア推移',
+    title: '直近5試合のポイント推移',
     categories: recent.map((m) => shortDate(m.date)),
     sValues: recentSScores,
     rValues: recentRScores,
@@ -129,8 +129,8 @@ export function renderHomeSection(allMatches, { sColor, rColor }) {
       return `
       <tr class="${m.voided ? 'voided-row' : ''}">
         <td>${shortDate(m.date)}</td>
-        <td>${m.sGoals}-${m.sAssists}<span class="score-sub">(${sScore.toFixed(1)})</span></td>
-        <td>${m.rGoals}-${m.rAssists}<span class="score-sub">(${rScore.toFixed(1)})</span></td>
+        <td><span class="stat-cell"><span class="stat-main">${m.sGoals}-${m.sAssists}</span><span class="stat-sub">${sScore.toFixed(1)}pt</span></span></td>
+        <td><span class="stat-cell"><span class="stat-main">${m.rGoals}-${m.rAssists}</span><span class="stat-sub">${rScore.toFixed(1)}pt</span></span></td>
         <td class="winner-cell">${winnerEmoji(winner)}</td>
       </tr>
     `;
@@ -167,8 +167,8 @@ export function renderHomeSection(allMatches, { sColor, rColor }) {
             ${trendRow('🐊', 'R', '得点', recentRGoals, overallRGoals)}
             ${trendRow('🦅', 'S', 'アシスト', recentSAssists, overallSAssists)}
             ${trendRow('🐊', 'R', 'アシスト', recentRAssists, overallRAssists)}
-            ${trendRow('🦅', 'S', 'スコア', recentSScores, overallSScores)}
-            ${trendRow('🐊', 'R', 'スコア', recentRScores, overallRScores)}
+            ${trendRow('🦅', 'S', 'ポイント', recentSScores, overallSScores)}
+            ${trendRow('🐊', 'R', 'ポイント', recentRScores, overallRScores)}
           </ul>
           <p class="home-note">▲ = 全期間平均より上振れ(好調) / ▼ = 下振れ(不調)</p>
         </div>
