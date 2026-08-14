@@ -3,7 +3,7 @@ import { seasonNumberForDate, formatSeasonRange } from './seasons.js';
 import { matchResult, winnerEmoji } from './scoring.js';
 import { MATCHES } from './matches.js';
 import { buildDistributionChart, buildTrendLineChart, attachChartTooltips, stdDev, coefficientOfVariation } from './charts.js';
-import { renderHomeSection, shortDate } from './home.js';
+import { renderHomeSection } from './home.js';
 import { SEASON_REWARDS } from './rewards.js';
 
 const S_COLOR = '#3987e5';
@@ -161,7 +161,7 @@ function renderBestRecordsTable(records) {
   }
   const cell = (best, formatValue) => {
     if (!best) return '<span class="record-date">—</span>';
-    return `${formatValue(best.value)}${best.voided ? '*' : ''} <span class="record-date">(${shortDate(best.date)})</span>`;
+    return `${formatValue(best.value)}${best.voided ? '*' : ''} <span class="record-date">(${fullDate(best.date)})</span>`;
   };
   return `
     <table class="cv-table">
@@ -486,6 +486,13 @@ function computeStats(matches) {
     rAvgAssists: avg(rAssistsSum),
     seasonWinnerLabel,
   };
+}
+
+// ベスト記録は「全期間」で見ると年をまたぐため、月/日だけだと何年の記録か
+// 分からなくなる。ここでは常に年を含めて表示する。
+function fullDate(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  return `${y}/${Number(m)}/${Number(d)}`;
 }
 
 function escapeHtml(str) {
