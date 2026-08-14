@@ -86,6 +86,14 @@ function render() {
     });
   });
 
+  // スマホの長押しはテキスト選択と競合して開きづらいため、タップ/クリックで
+  // メモの全文表示をトグルする(title属性はPCでのホバー確認用に残す)。
+  document.querySelectorAll('.note-cell[title]').forEach((cell) => {
+    cell.addEventListener('click', () => {
+      cell.classList.toggle('note-expanded');
+    });
+  });
+
   attachChartTooltips(root);
 }
 
