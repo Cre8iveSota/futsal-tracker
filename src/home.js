@@ -69,7 +69,7 @@ function trendRow(emoji, name, unit, recentValues, overallValues) {
   `;
 }
 
-export function renderHomeSection(allMatches, { sColor, rColor }) {
+export function renderHomeSection(allMatches, { sColor, rColor, sBorderColor, rBorderColor }) {
   if (allMatches.length === 0) return '';
 
   const recent = getRecentMatches(allMatches);
@@ -142,8 +142,8 @@ export function renderHomeSection(allMatches, { sColor, rColor }) {
       <div class="dist-header">
         <h2>直近のコンディション(直近${recent.length}試合)</h2>
         <div class="chart-legend">
-          <span class="legend-item"><span class="swatch" style="background:${sColor}"></span>樋口(S)</span>
-          <span class="legend-item"><span class="swatch" style="background:${rColor}"></span>本郷(R)</span>
+          <span class="legend-item"><span class="swatch" style="background:${sColor}; border-color:${sBorderColor || 'transparent'}"></span>樋口(S)</span>
+          <span class="legend-item"><span class="swatch" style="background:${rColor}; border-color:${rBorderColor || 'transparent'}"></span>本郷(R)</span>
         </div>
       </div>
 
