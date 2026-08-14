@@ -132,7 +132,7 @@ function renderStatsView(filtered, seasons) {
       <div class="stat-card stat-card-wide">
         <h3>バラつき(変動係数 CV = 標準偏差÷平均)</h3>
         <table class="cv-table">
-          <thead><tr><th></th><th>得点</th><th>アシスト</th><th>スコア</th></tr></thead>
+          <thead><tr><th></th><th>得点</th><th>アシスト</th><th>ポイント</th></tr></thead>
           <tbody>
             <tr><td>🦅 S</td><td>${variability.sGoalsCV.toFixed(2)}</td><td>${variability.sAssistsCV.toFixed(2)}</td><td>${variability.sScoreCV.toFixed(2)}</td></tr>
             <tr><td>🐊 R</td><td>${variability.rGoalsCV.toFixed(2)}</td><td>${variability.rAssistsCV.toFixed(2)}</td><td>${variability.rScoreCV.toFixed(2)}</td></tr>
@@ -158,8 +158,8 @@ function renderRecordsView(filtered, seasons) {
             <th>日付</th>
             <th>S得点-アシスト</th>
             <th>R得点-アシスト</th>
-            <th>Sスコア</th>
-            <th>Rスコア</th>
+            <th>Sポイント</th>
+            <th>Rポイント</th>
             <th>勝者</th>
             <th>メモ</th>
           </tr>
@@ -198,14 +198,14 @@ function renderDistributionSection(matches) {
   });
   const scoreChart = buildDistributionChart({
     id: 'scoreChart',
-    title: '合成スコアの分布(得点+アシスト×0.8)',
-    unitLabel: 'スコア',
+    title: '合成ポイントの分布(得点+アシスト×0.8)',
+    unitLabel: 'ポイント',
     sValues: matches.map((m) => matchResult(m).sScore),
     rValues: matches.map((m) => matchResult(m).rScore),
     sColor: S_COLOR,
     rColor: R_COLOR,
     continuous: true,
-    axisCaption: '横軸: 1日あたりの合成スコア',
+    axisCaption: '横軸: 1日あたりの合成ポイント',
   });
 
   return `
@@ -227,7 +227,7 @@ function renderDistributionSection(matches) {
   `;
 }
 
-// 得点・アシスト・合成スコアそれぞれの標準偏差(SD)・変動係数(CV=SD÷平均)。
+// 得点・アシスト・合成ポイントそれぞれの標準偏差(SD)・変動係数(CV=SD÷平均)。
 // CVは単位が違う指標同士でも「バラつきの大きさ」を横比較できる。
 function computeVariability(matches) {
   const sGoals = matches.map((m) => m.sGoals);
@@ -278,7 +278,7 @@ function renderSeasonStabilitySection() {
 
   const trendChart = buildTrendLineChart({
     id: 'stabilityTrendChart',
-    title: '合成スコアCVの推移',
+    title: '合成ポイントCVの推移',
     categories,
     sValues: rows.map((r) => r.v.sScoreCV),
     rValues: rows.map((r) => r.v.rScoreCV),
@@ -299,12 +299,12 @@ function renderSeasonStabilitySection() {
       <div class="dist-grid dist-grid-single">
         ${trendChart}
       </div>
-      <p class="chart-caption">縦軸: 合成スコアのCV(標準偏差÷平均)。数値が小さいほど毎回安定、大きいほど試合ごとのブレが大きいことを表します。</p>
+      <p class="chart-caption">縦軸: 合成ポイントのCV(標準偏差÷平均)。数値が小さいほど毎回安定、大きいほど試合ごとのブレが大きいことを表します。</p>
 
       <div class="stability-table-wrap">
         <table class="stability-table">
           <thead>
-            <tr><th>シーズン</th><th>試合数</th><th>得点CV(S/R)</th><th>アシストCV(S/R)</th><th>スコアCV(S/R)</th></tr>
+            <tr><th>シーズン</th><th>試合数</th><th>得点CV(S/R)</th><th>アシストCV(S/R)</th><th>ポイントCV(S/R)</th></tr>
           </thead>
           <tbody>
             ${rows

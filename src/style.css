@@ -69,7 +69,7 @@ body {
   z-index: 40;
   background: var(--panel);
   border-top: 1px solid var(--panel-border);
-  padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+  padding: 10px 6px calc(10px + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.35);
 }
 .bottom-tab {
@@ -77,20 +77,23 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 6px 4px;
+  justify-content: center;
+  gap: 4px;
+  min-height: 56px;
+  padding: 8px 4px;
   color: var(--text-dim);
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 10px;
 }
-.bottom-tab-icon { font-size: 1.3rem; line-height: 1; }
-.bottom-tab-label { font-size: 0.68rem; font-weight: 600; }
+.bottom-tab:active { background: rgba(255, 255, 255, 0.06); }
+.bottom-tab-icon { font-size: 1.7rem; line-height: 1; }
+.bottom-tab-label { font-size: 0.78rem; font-weight: 600; }
 .bottom-tab.active { color: var(--accent); }
 
 @media (max-width: 640px) {
   .view-nav { display: none; }
   .bottom-nav { display: flex; }
-  #app { padding-bottom: 76px; }
+  #app { padding-bottom: 96px; }
 }
 
 /* ---- home (直近のコンディション) ---- */
@@ -116,7 +119,16 @@ body {
 .home-card h3.home-subhead { margin-top: 14px; }
 .recent-table { font-size: 0.85rem; }
 .recent-table th, .recent-table td { padding: 5px 8px; }
-.score-sub { color: var(--text-dim); font-size: 0.78em; margin-left: 2px; }
+.stat-cell {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+.stat-main { white-space: nowrap; }
+.stat-sub { color: var(--text-dim); font-size: 0.8em; white-space: nowrap; }
 .home-note { margin: 8px 0 0; font-size: 0.8rem; color: var(--text-dim); }
 .streak-highlight { font-size: 1rem; font-weight: 600; margin: 0; }
 .trend-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
