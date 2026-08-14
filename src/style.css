@@ -1,15 +1,16 @@
 :root {
-  --bg: #0f1720;
-  --panel: #182432;
-  --panel-border: #2a3a4a;
-  --text: #e8eef4;
-  --text-dim: #9fb0c0;
-  --accent: #e08a2c;
-  --s-color: #3987e5;
-  --r-color: #d95926;
-  --gridline: #2c3a48;
-  --good: #0ca30c;
-  --down: #e66767;
+  --bg: #f3f5f9;
+  --panel: #ffffff;
+  --panel-border: #e1e5ee;
+  --text: #1b2230;
+  --text-dim: #667085;
+  --accent: #f0973a;
+  --accent-text: #b45309;
+  --s-color: #2a78d6;
+  --r-color: #eb6834;
+  --gridline: #e8ebf2;
+  --good: #006300;
+  --down: #d03b3b;
 }
 
 * { box-sizing: border-box; }
@@ -85,10 +86,10 @@ body {
   text-decoration: none;
   border-radius: 10px;
 }
-.bottom-tab:active { background: rgba(255, 255, 255, 0.06); }
+.bottom-tab:active { background: rgba(0, 0, 0, 0.06); }
 .bottom-tab-icon { font-size: 1.7rem; line-height: 1; }
 .bottom-tab-label { font-size: 0.78rem; font-weight: 600; }
-.bottom-tab.active { color: var(--accent); }
+.bottom-tab.active { color: var(--accent-text); }
 
 @media (max-width: 640px) {
   .view-nav { display: none; }
@@ -114,6 +115,7 @@ body {
   border: 1px solid var(--panel-border);
   border-radius: 10px;
   padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 .home-card h3 { margin: 0 0 8px; font-size: 0.9rem; color: var(--text-dim); }
 .home-card h3.home-subhead { margin-top: 14px; }
@@ -172,6 +174,7 @@ body {
   border: 1px solid var(--panel-border);
   border-radius: 10px;
   padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 .stat-card h3 { margin: 0 0 8px; font-size: 0.95rem; color: var(--text-dim); }
 .stat-card p { margin: 2px 0; }
@@ -220,6 +223,7 @@ body {
   border: 1px solid var(--panel-border);
   border-radius: 10px;
   padding: 12px 14px 8px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 .chart-card h4 { margin: 0 0 4px; font-size: 0.9rem; color: var(--text); }
 .dist-svg { width: 100%; height: auto; display: block; }
@@ -235,7 +239,7 @@ body {
 .dist-grid-single { grid-template-columns: 1fr; max-width: 640px; }
 .trend-line { stroke-width: 2; }
 .trend-hit { cursor: pointer; }
-.trend-hit:hover { fill: rgba(255, 255, 255, 0.04); }
+.trend-hit:hover { fill: rgba(0, 0, 0, 0.04); }
 
 .stability-table-wrap { overflow-x: auto; margin-top: 10px; }
 .stability-table { font-size: 0.8rem; }
@@ -252,6 +256,7 @@ body {
   border: 1px solid var(--panel-border);
   border-radius: 10px;
   padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 .reward-item.reward-pending { opacity: 0.65; border-style: dashed; }
 .reward-season { font-size: 0.8rem; color: var(--text-dim); font-weight: 600; margin-bottom: 4px; }
@@ -259,7 +264,7 @@ body {
 .reward-date { color: var(--text-dim); font-size: 0.85rem; margin: 0 0 8px; }
 .reward-link {
   display: inline-block;
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 600;
