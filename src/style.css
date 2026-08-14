@@ -303,7 +303,14 @@ th, td {
 }
 th { color: var(--text-dim); font-weight: 600; }
 .winner-cell { font-size: 1.1rem; text-align: center; }
-.note-cell { white-space: normal; color: var(--text-dim); max-width: 240px; }
+.note-cell {
+  color: var(--text-dim);
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
+}
 .voided-row { opacity: 0.55; }
 .empty { color: var(--text-dim); text-align: center; padding: 24px; }
 
