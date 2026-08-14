@@ -8,12 +8,24 @@ import { renderHomeSection } from './home.js';
 const S_COLOR = '#3987e5';
 const R_COLOR = '#d95926';
 const LOW_SAMPLE_THRESHOLD = 5;
+const VIEWS = ['home', 'stats', 'records'];
 
 const root = document.getElementById('app');
 
+function viewFromHash() {
+  const v = location.hash.replace('#', '');
+  return VIEWS.includes(v) ? v : 'home';
+}
+
 const state = {
+  view: viewFromHash(),
   selectedSeason: 'all',
 };
+
+window.addEventListener('hashchange', () => {
+  state.view = viewFromHash();
+  render();
+});
 
 render();
 
@@ -25,16 +37,42 @@ function render() {
       ? MATCHES
       : MATCHES.filter((m) => seasonNumberForDate(m.date) === Number(state.selectedSeason));
 
-  const stats = computeStats(filtered);
-  const variability = computeVariability(filtered);
-
   root.innerHTML = `
     <header class="topbar">
       <h1>🦅 vs 🐊 個サル対戦記録</h1>
     </header>
 
-    ${renderHomeSection(MATCHES, { sColor: S_COLOR, rColor: R_COLOR })}
+    <nav class="view-nav">
+      <a href="#home" class="view-tab ${state.view === 'home' ? 'active' : ''}">🏠 ホーム</a>
+      <a href="#stats" class="view-tab ${state.view === 'stats' ? 'active' : ''}">📊 統計・分布</a>
+      <a href="#records" class="view-tab ${state.view === 'records' ? 'active' : ''}">📋 全記録</a>
+    </nav>
 
+    ${state.view === 'home' ? renderHomeView() : ''}
+    ${state.view === 'stats' ? renderStatsView(filtered, seasons) : ''}
+    ${state.view === 'records' ? renderRecordsView(filtered, seasons) : ''}
+
+    <footer class="footer-note">
+      <p>新しい記録は <code>src/matches.js</code> を編集してpushすると反映されます。</p>
+    </footer>
+  `;
+
+  document.querySelectorAll('.season-tabs .tab').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.selectedSeason = btn.dataset.season;
+      render();
+    });
+  });
+
+  attachChartTooltips(root);
+}
+
+function renderHomeView() {
+  return renderHomeSection(MATCHES, { sColor: S_COLOR, rColor: R_COLOR });
+}
+
+function renderSeasonSubTabs(seasons) {
+  return `
     <section class="season-tabs">
       <button class="tab ${state.selectedSeason === 'all' ? 'active' : ''}" data-season="all">全期間</button>
       ${seasons
@@ -46,8 +84,16 @@ function render() {
         )
         .join('')}
     </section>
-
     ${state.selectedSeason !== 'all' ? `<p class="season-range">${formatSeasonRange(Number(state.selectedSeason))}</p>` : ''}
+  `;
+}
+
+function renderStatsView(filtered, seasons) {
+  const stats = computeStats(filtered);
+  const variability = computeVariability(filtered);
+
+  return `
+    ${renderSeasonSubTabs(seasons)}
 
     <section class="stats-grid">
       <div class="stat-card">
@@ -82,6 +128,12 @@ function render() {
 
     ${filtered.length > 0 ? renderDistributionSection(filtered) : ''}
     ${renderSeasonStabilitySection()}
+  `;
+}
+
+function renderRecordsView(filtered, seasons) {
+  return `
+    ${renderSeasonSubTabs(seasons)}
 
     <section class="table-section">
       <table>
@@ -106,20 +158,7 @@ function render() {
       </table>
       ${filtered.length === 0 ? '<p class="empty">まだ記録がありません。</p>' : ''}
     </section>
-
-    <footer class="footer-note">
-      <p>新しい記録は <code>src/matches.js</code> を編集してpushすると反映されます。</p>
-    </footer>
   `;
-
-  document.querySelectorAll('.tab').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      state.selectedSeason = btn.dataset.season;
-      render();
-    });
-  });
-
-  attachChartTooltips(root);
 }
 
 function renderDistributionSection(matches) {
