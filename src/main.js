@@ -448,7 +448,7 @@ function renderRow(m) {
       <td>${sScore.toFixed(1)}</td>
       <td>${rScore.toFixed(1)}</td>
       <td class="winner-cell">${winnerEmoji(winner)}</td>
-      <td class="note-cell">${escapeHtml(m.note || '')}</td>
+      <td class="note-cell"${m.note ? ` title="${escapeHtml(m.note)}"` : ''}>${escapeHtml(m.note || '')}</td>
     </tr>
   `;
 }
