@@ -4,6 +4,7 @@ import { matchResult, winnerEmoji } from './scoring.js';
 import { MATCHES } from './matches.js';
 import { buildDistributionChart, buildTrendLineChart, attachChartTooltips, stdDev, coefficientOfVariation } from './charts.js';
 import { renderHomeSection, shortDate } from './home.js';
+import { SEASON_REWARDS } from './rewards.js';
 
 const S_COLOR = '#3987e5';
 const R_COLOR = '#d95926';
@@ -214,7 +215,38 @@ function computeBestRecords(matches) {
 // 無関係に、常に全シーズンを横並びで見せる(「統計・分布」タブと混在させると
 // シーズンタブを切り替えても変化しないため紛らわしい、というフィードバックにより分離)。
 function renderTrendsView() {
-  return renderSeasonStabilitySection();
+  return renderSeasonStabilitySection() + renderSeasonRewardsSection();
+}
+
+function renderSeasonRewardsSection() {
+  if (SEASON_REWARDS.length === 0) return '';
+
+  return `
+    <section class="dist-section">
+      <div class="dist-header">
+        <h3>🍽 シーズンの打ち上げ記録</h3>
+      </div>
+      <div class="reward-list">
+        ${SEASON_REWARDS.map((r) => {
+          const pending = !r.date;
+          return `
+            <div class="reward-item ${pending ? 'reward-pending' : ''}">
+              <div class="reward-season">Season ${r.season}</div>
+              <div class="reward-body">
+                <p class="reward-meal">${escapeHtml(r.item)}</p>
+                ${
+                  pending
+                    ? ''
+                    : `<p class="reward-date">${escapeHtml(r.date.replaceAll('-', '/'))}</p>
+                       ${r.mapUrl ? `<a class="reward-link" href="${escapeHtml(r.mapUrl)}" target="_blank" rel="noopener noreferrer">📍 お店を見る</a>` : ''}`
+                }
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </section>
+  `;
 }
 
 function renderRecordsView(filtered, seasons) {
@@ -439,8 +471,8 @@ function computeStats(matches) {
   const avg = (sum) => (sum / n).toFixed(2);
 
   let seasonWinnerLabel = '対戦なし';
-  if (sWins > rWins) seasonWinnerLabel = '🦅 樋口さんの勝ち越し(奢られる側)';
-  else if (rWins > sWins) seasonWinnerLabel = '🐊 本郷さんの勝ち越し(奢られる側)';
+  if (sWins > rWins) seasonWinnerLabel = '🦅 樋口さんの勝ち越し';
+  else if (rWins > sWins) seasonWinnerLabel = '🐊 本郷さんの勝ち越し';
   else if (sWins === rWins && matches.length > 0) seasonWinnerLabel = '五分(現時点で同数)';
 
   return {
