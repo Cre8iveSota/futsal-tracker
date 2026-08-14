@@ -3,7 +3,7 @@ import { seasonNumberForDate, formatSeasonRange } from './seasons.js';
 import { matchResult, winnerEmoji } from './scoring.js';
 import { MATCHES } from './matches.js';
 import { buildDistributionChart, buildTrendLineChart, attachChartTooltips, stdDev, coefficientOfVariation } from './charts.js';
-import { renderHomeSection } from './home.js';
+import { renderHomeSection, shortDate } from './home.js';
 
 const S_COLOR = '#3987e5';
 const R_COLOR = '#d95926';
@@ -109,6 +109,7 @@ function renderSeasonSubTabs(seasons) {
 function renderStatsView(filtered, seasons) {
   const stats = computeStats(filtered);
   const variability = computeVariability(filtered);
+  const records = computeBestRecords(filtered);
 
   return `
     ${renderSeasonSubTabs(seasons)}
@@ -142,10 +143,71 @@ function renderStatsView(filtered, seasons) {
         </table>
         <p class="cv-note">数値が小さいほど「試合ごとのブレが少なく安定」、大きいほど「日によって波がある」ことを表します。</p>
       </div>
+      <div class="stat-card stat-card-wide">
+        <h3>ベスト記録(選択期間中の1試合)</h3>
+        ${renderBestRecordsTable(records)}
+        <p class="cv-note">その区間で記録した1試合あたりの最高値です。${records.hasVoidedBest ? '(*は同じチームのため無効試合での記録)' : ''}</p>
+      </div>
     </section>
 
     ${filtered.length > 0 ? renderDistributionSection(filtered) : ''}
   `;
+}
+
+function renderBestRecordsTable(records) {
+  if (!records.sGoals && !records.rGoals) {
+    return '<p class="empty">記録がありません。</p>';
+  }
+  const cell = (best, formatValue) => {
+    if (!best) return '<span class="record-date">—</span>';
+    return `${formatValue(best.value)}${best.voided ? '*' : ''} <span class="record-date">(${shortDate(best.date)})</span>`;
+  };
+  return `
+    <table class="cv-table">
+      <thead><tr><th></th><th>得点</th><th>アシスト</th><th>ポイント</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>🦅 S</td>
+          <td>${cell(records.sGoals, (v) => v)}</td>
+          <td>${cell(records.sAssists, (v) => v)}</td>
+          <td>${cell(records.sPoints, (v) => `${v.toFixed(1)}pt`)}</td>
+        </tr>
+        <tr>
+          <td>🐊 R</td>
+          <td>${cell(records.rGoals, (v) => v)}</td>
+          <td>${cell(records.rAssists, (v) => v)}</td>
+          <td>${cell(records.rPoints, (v) => `${v.toFixed(1)}pt`)}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+}
+
+// 選択期間の中で、指標(得点/アシスト/ポイント)ごとに1試合あたりの最高値を探す。
+// 同じチームで無効になった試合の記録も対象に含めるが(バラつき集計と同じ扱い)、
+// その場合は voided フラグを立てて呼び出し側で目印を出せるようにする。
+function findBestMatch(matches, valueFn) {
+  let best = null;
+  matches.forEach((m) => {
+    const value = valueFn(m);
+    if (best === null || value > best.value) {
+      best = { value, date: m.date, voided: !!m.voided };
+    }
+  });
+  return best;
+}
+
+function computeBestRecords(matches) {
+  const sGoals = findBestMatch(matches, (m) => m.sGoals);
+  const rGoals = findBestMatch(matches, (m) => m.rGoals);
+  const sAssists = findBestMatch(matches, (m) => m.sAssists);
+  const rAssists = findBestMatch(matches, (m) => m.rAssists);
+  const sPoints = findBestMatch(matches, (m) => matchResult(m).sScore);
+  const rPoints = findBestMatch(matches, (m) => matchResult(m).rScore);
+
+  const hasVoidedBest = [sGoals, rGoals, sAssists, rAssists, sPoints, rPoints].some((r) => r && r.voided);
+
+  return { sGoals, rGoals, sAssists, rAssists, sPoints, rPoints, hasVoidedBest };
 }
 
 // シーズンをまたいだ比較専用のビュー。上部のシーズンサブタブによる絞り込みとは

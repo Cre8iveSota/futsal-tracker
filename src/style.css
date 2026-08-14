@@ -181,6 +181,7 @@ body {
 .cv-table th, .cv-table td { padding: 3px 10px 3px 0; border-bottom: none; white-space: normal; }
 .cv-table th { color: var(--text-dim); font-weight: 500; }
 .cv-note { margin: 8px 0 0; font-size: 0.75rem; color: var(--text-dim); }
+.record-date { color: var(--text-dim); font-size: 0.85em; }
 
 /* ---- distribution charts ---- */
 .dist-section { margin-bottom: 24px; }

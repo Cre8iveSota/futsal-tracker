@@ -19,7 +19,7 @@ function average(values) {
   return values.reduce((a, b) => a + b, 0) / values.length;
 }
 
-function shortDate(dateStr) {
+export function shortDate(dateStr) {
   const [, m, d] = dateStr.split('-');
   return `${Number(m)}/${Number(d)}`;
 }
