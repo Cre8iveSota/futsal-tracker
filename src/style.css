@@ -309,7 +309,19 @@ th { color: var(--text-dim); font-weight: 600; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: help;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* メモがある行だけタップ/クリックで全文表示できることを示す */
+.note-cell[title] {
+  cursor: pointer;
+  border-bottom: 1px dashed var(--text-dim);
+}
+.note-cell.note-expanded {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  max-width: none;
 }
 .voided-row { opacity: 0.55; }
 .empty { color: var(--text-dim); text-align: center; padding: 24px; }
