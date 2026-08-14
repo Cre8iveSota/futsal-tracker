@@ -11,6 +11,7 @@ const R_COLOR = '#cce7d3';
 const S_BORDER_COLOR = '#ff4b78';
 const R_BORDER_COLOR = '#51f27a';
 const LOW_SAMPLE_THRESHOLD = 5;
+const WEEKDAY_JA = ['日', '月', '火', '水', '木', '金', '土'];
 const NAV_ITEMS = [
   { hash: 'home', icon: '🏠', label: 'ホーム' },
   { hash: 'stats', icon: '📊', label: '統計・分布' },
@@ -89,11 +90,11 @@ function render() {
 }
 
 function renderHomeView() {
+  // ホームのスパークラインは折れ線なので、棒グラフの縁取りと同じ濃い色をそのまま使う
+  // (薄い塗り色だと折れ線が見えにくいため)。
   return renderHomeSection(MATCHES, {
-    sColor: S_COLOR,
-    rColor: R_COLOR,
-    sBorderColor: S_BORDER_COLOR,
-    rBorderColor: R_BORDER_COLOR,
+    sColor: S_BORDER_COLOR,
+    rColor: R_BORDER_COLOR,
   });
 }
 
@@ -391,8 +392,8 @@ function renderSeasonStabilitySection() {
     categories,
     sValues: rows.map((r) => r.v.sScoreCV),
     rValues: rows.map((r) => r.v.rScoreCV),
-    sColor: S_COLOR,
-    rColor: R_COLOR,
+    sColor: S_BORDER_COLOR,
+    rColor: R_BORDER_COLOR,
     unitLabel: '',
   });
 
@@ -401,8 +402,8 @@ function renderSeasonStabilitySection() {
       <div class="dist-header">
         <h3>シーズン別の安定性(CV)の推移</h3>
         <div class="chart-legend">
-          <span class="legend-item"><span class="swatch" style="background:${S_COLOR}; border-color:${S_BORDER_COLOR}"></span>樋口(S)</span>
-          <span class="legend-item"><span class="swatch" style="background:${R_COLOR}; border-color:${R_BORDER_COLOR}"></span>本郷(R)</span>
+          <span class="legend-item"><span class="swatch" style="background:${S_BORDER_COLOR}"></span>樋口(S)</span>
+          <span class="legend-item"><span class="swatch" style="background:${R_BORDER_COLOR}"></span>本郷(R)</span>
         </div>
       </div>
       <div class="dist-grid dist-grid-single">
@@ -501,8 +502,6 @@ function fullDate(dateStr) {
   const [y, m, d] = dateStr.split('-');
   return `${y}/${Number(m)}/${Number(d)}`;
 }
-
-const WEEKDAY_JA = ['日', '月', '火', '水', '木', '金', '土'];
 
 // シーズンの打ち上げ記録は「お店の予約が何曜日だったか」がぱっと分かると便利なため、
 // 日付に曜日を添えて表示する。
