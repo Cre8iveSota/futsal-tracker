@@ -39,6 +39,26 @@ body {
 }
 .topbar h1 { font-size: 1.3rem; margin: 0; }
 
+/* ---- 上位ナビ(ホーム/統計/全記録) ---- */
+.view-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.view-tab {
+  display: inline-block;
+  padding: 10px 16px;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.view-tab:hover { color: var(--text); }
+.view-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
 /* ---- home (直近のコンディション) ---- */
 .home-section {
   margin-bottom: 24px;
