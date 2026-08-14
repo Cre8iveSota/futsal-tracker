@@ -11,6 +11,7 @@ const LOW_SAMPLE_THRESHOLD = 5;
 const NAV_ITEMS = [
   { hash: 'home', icon: '🏠', label: 'ホーム' },
   { hash: 'stats', icon: '📊', label: '統計・分布' },
+  { hash: 'trends', icon: '📈', label: 'シーズン比較' },
   { hash: 'records', icon: '📋', label: '全記録' },
 ];
 const VIEWS = NAV_ITEMS.map((item) => item.hash);
@@ -55,6 +56,7 @@ function render() {
 
     ${state.view === 'home' ? renderHomeView() : ''}
     ${state.view === 'stats' ? renderStatsView(filtered, seasons) : ''}
+    ${state.view === 'trends' ? renderTrendsView() : ''}
     ${state.view === 'records' ? renderRecordsView(filtered, seasons) : ''}
 
     <footer class="footer-note">
@@ -143,8 +145,14 @@ function renderStatsView(filtered, seasons) {
     </section>
 
     ${filtered.length > 0 ? renderDistributionSection(filtered) : ''}
-    ${renderSeasonStabilitySection()}
   `;
+}
+
+// シーズンをまたいだ比較専用のビュー。上部のシーズンサブタブによる絞り込みとは
+// 無関係に、常に全シーズンを横並びで見せる(「統計・分布」タブと混在させると
+// シーズンタブを切り替えても変化しないため紛らわしい、というフィードバックにより分離)。
+function renderTrendsView() {
+  return renderSeasonStabilitySection();
 }
 
 function renderRecordsView(filtered, seasons) {
