@@ -6,8 +6,10 @@ import { buildDistributionChart, buildTrendLineChart, attachChartTooltips, stdDe
 import { renderHomeSection } from './home.js';
 import { SEASON_REWARDS } from './rewards.js';
 
-const S_COLOR = '#3987e5';
-const R_COLOR = '#d95926';
+const S_COLOR = '#f9c1cf';
+const R_COLOR = '#cce7d3';
+const S_BORDER_COLOR = '#ff4b78';
+const R_BORDER_COLOR = '#51f27a';
 const LOW_SAMPLE_THRESHOLD = 5;
 const NAV_ITEMS = [
   { hash: 'home', icon: '🏠', label: 'ホーム' },
@@ -87,7 +89,12 @@ function render() {
 }
 
 function renderHomeView() {
-  return renderHomeSection(MATCHES, { sColor: S_COLOR, rColor: R_COLOR });
+  return renderHomeSection(MATCHES, {
+    sColor: S_COLOR,
+    rColor: R_COLOR,
+    sBorderColor: S_BORDER_COLOR,
+    rBorderColor: R_BORDER_COLOR,
+  });
 }
 
 function renderSeasonSubTabs(seasons) {
@@ -315,8 +322,8 @@ function renderDistributionSection(matches) {
       <div class="dist-header">
         <h3>個人統計分布</h3>
         <div class="chart-legend">
-          <span class="legend-item"><span class="swatch" style="background:${S_COLOR}"></span>樋口(S)</span>
-          <span class="legend-item"><span class="swatch" style="background:${R_COLOR}"></span>本郷(R)</span>
+          <span class="legend-item"><span class="swatch" style="background:${S_COLOR}; border-color:${S_BORDER_COLOR}"></span>樋口(S)</span>
+          <span class="legend-item"><span class="swatch" style="background:${R_COLOR}; border-color:${R_BORDER_COLOR}"></span>本郷(R)</span>
           <span class="legend-item"><span class="swatch swatch-dashed"></span>期待値(平均)</span>
         </div>
       </div>
@@ -394,8 +401,8 @@ function renderSeasonStabilitySection() {
       <div class="dist-header">
         <h3>シーズン別の安定性(CV)の推移</h3>
         <div class="chart-legend">
-          <span class="legend-item"><span class="swatch" style="background:${S_COLOR}"></span>樋口(S)</span>
-          <span class="legend-item"><span class="swatch" style="background:${R_COLOR}"></span>本郷(R)</span>
+          <span class="legend-item"><span class="swatch" style="background:${S_COLOR}; border-color:${S_BORDER_COLOR}"></span>樋口(S)</span>
+          <span class="legend-item"><span class="swatch" style="background:${R_COLOR}; border-color:${R_BORDER_COLOR}"></span>本郷(R)</span>
         </div>
       </div>
       <div class="dist-grid dist-grid-single">
