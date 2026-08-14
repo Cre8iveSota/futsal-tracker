@@ -237,7 +237,7 @@ function renderSeasonRewardsSection() {
                 ${
                   pending
                     ? ''
-                    : `<p class="reward-date">${escapeHtml(r.date.replaceAll('-', '/'))}</p>
+                    : `<p class="reward-date">${escapeHtml(dateWithWeekday(r.date))}</p>
                        ${r.mapUrl ? `<a class="reward-link" href="${escapeHtml(r.mapUrl)}" target="_blank" rel="noopener noreferrer">📍 お店を見る</a>` : ''}`
                 }
               </div>
@@ -493,6 +493,15 @@ function computeStats(matches) {
 function fullDate(dateStr) {
   const [y, m, d] = dateStr.split('-');
   return `${y}/${Number(m)}/${Number(d)}`;
+}
+
+const WEEKDAY_JA = ['日', '月', '火', '水', '木', '金', '土'];
+
+// シーズンの打ち上げ記録は「お店の予約が何曜日だったか」がぱっと分かると便利なため、
+// 日付に曜日を添えて表示する。
+function dateWithWeekday(dateStr) {
+  const weekday = WEEKDAY_JA[new Date(`${dateStr}T00:00:00`).getDay()];
+  return `${fullDate(dateStr)}(${weekday})`;
 }
 
 function escapeHtml(str) {
