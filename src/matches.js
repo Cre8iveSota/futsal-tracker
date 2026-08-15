@@ -58,4 +58,5 @@ export const MATCHES = [
   // Season 4 (2026-08-01 〜、進行中)
   { date: '2026-08-01', sGoals: 4, sAssists: 2, rGoals: 6, rAssists: 4, voided: false, note: '' },
   { date: '2026-08-11', sGoals: 5, sAssists: 2, rGoals: 2, rAssists: 4, voided: false, note: '' },
+  { date: '2026-08-15', sGoals: 1, sAssists: 3, rGoals: 3, rAssists: 2, voided: true, note: '2チームのみのためノーゲーム' },
 ];
