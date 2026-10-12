@@ -66,4 +66,5 @@ export const MATCHES = [
   { date: '2026-09-23', sGoals: 0, sAssists: 2, rGoals: 1, rAssists: 2, voided: false, note: '' },
   { date: '2026-09-27', sGoals: 2, sAssists: 3, rGoals: 6, rAssists: 2, voided: false, note: '' },
   { date: '2026-10-04', sGoals: 4, sAssists: 1, rGoals: 3, rAssists: 0, voided: false, note: '' },
+  { date: '2026-10-12', sGoals: 6, sAssists: 1, rGoals: 4, rAssists: 1, voided: false, note: '' },
 ];
